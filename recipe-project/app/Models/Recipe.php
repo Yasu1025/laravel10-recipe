@@ -11,5 +11,5 @@ class Recipe extends Model
 
     protected $casts = [
         'id' => 'string'
-    ]
+    ];
 }
