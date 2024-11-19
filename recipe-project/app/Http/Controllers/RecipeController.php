@@ -3,14 +3,23 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\Recipe;
+use App\Models\Category;
 
 class RecipeController extends Controller
 {
     public function home()
     {
         // get list
-        $recipes = Recipe::select('recipes.id', 'recipes.title', 'recipes.description', 'recipes.created_at', 'recipes.image', 'users.name')
+        $recipes = Recipe::select(
+            'recipes.id',
+            'recipes.title',
+            'recipes.description',
+            'recipes.created_at',
+            'recipes.image',
+            'users.name',
+        )
             ->join('users', 'users.id', '=', 'recipes.user_id')
             ->orderBy('recipes.created_at', 'desc')
             ->limit(3)
@@ -29,9 +38,48 @@ class RecipeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $req)
     {
-        return view('home');
+        $filters = $req->all();
+        $query = Recipe::query()->select(
+            'recipes.id',
+            'recipes.title',
+            'recipes.description',
+            'recipes.created_at',
+            'recipes.image',
+            'users.name',
+            \DB::raw('AVG(reviews.rating) as rating')
+        )
+            ->join('users', 'users.id', '=', 'recipes.user_id')
+            ->leftJoin('reviews', 'reviews.recipe_id', '=', 'recipes.id')
+            ->groupBy('recipes.id')
+            ->orderBy('recipes.created_at', 'desc');
+
+        // Filtering
+        if (!empty($filters)) {
+            // with categories
+            if(!empty($filters['categories'])) {
+                $query->whereIn('recipes.category_id', $filters['categories']);
+            }
+
+            //with rating
+            if(!empty($filters['rating'])) {
+                $query
+                    ->havingRaw('AVG(reviews.rating) >= ?', [$filters['rating']])
+                    ->orderBy('rating', 'desc');
+            }
+
+            // with title
+            if(!empty($filters['title'])) {
+                $query->where('recipes.title', 'LIKE',  '%'.$filters['title'].'%');
+            }
+        }
+
+        $recipes = $query->paginate(8);
+
+        $categories = $populars = Category::all();
+
+        return view('recipes.index', compact('recipes', 'categories', 'filters'));
     }
 
     /**
