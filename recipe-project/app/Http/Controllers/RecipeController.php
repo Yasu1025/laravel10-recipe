@@ -149,6 +149,7 @@ class RecipeController extends Controller
             throw $th;
         }
 
+        flash()->success('Recipe has been created!!!!!');
         return redirect()->route('recipe.show', ['id' => $uuid]);
     }
 
