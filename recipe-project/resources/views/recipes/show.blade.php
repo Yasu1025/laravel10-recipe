@@ -33,10 +33,9 @@
         </div>
     </div>
   </div>
-  {{-- TODO --}}
-  {{-- @if($is_my_recipe)
+  @if($is_my_recipe)
     <a href="{{ route('recipe.edit', ['id' => $recipe['id']]) }}" class="block w-2/12 p-4 my-4 mx-auto bg-white rounded text-center text-green-500 border border-green-500 hover:bg-green-500 hover:text-white">編集する</a>
-  @endif --}}
+  @endif
   <!-- reviews -->
   @guest
     <p class="text-center text-gray-500 my-6">レビューを投稿するには<a href="{{ route('login') }}" class="text-blue-700">ログイン</a>してください</p>

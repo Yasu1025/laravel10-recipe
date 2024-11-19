@@ -31,3 +31,9 @@ Breadcrumbs::for('create', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
     $trail->push('レシピ投稿', route('recipe.create'));
 });
+
+// Home > edit
+Breadcrumbs::for('edit', function (BreadcrumbTrail $trail, $id) {
+    $trail->parent('home');
+    $trail->push('レシピ編集', route('recipe.edit', $id));
+});
