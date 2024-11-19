@@ -42,13 +42,15 @@
     <p class="text-center text-gray-500 my-6">レビューを投稿するには<a href="{{ route('login') }}" class="text-blue-700">ログイン</a>してください</p>
   @endguest
   @auth
-    @if($is_reviewed)
+    {{-- TODO --}}
+    {{-- @if($is_reviewed)
         <p class="text-center text-gray-500 mb-4">レビューは投稿済みです</p>
     @elseif($is_my_recipe)
         <p class="text-center text-gray-500 mb-4">自分のレシピにはレビューできません</p>
-    @else
+    @else --}}
         <div class="w-10/12 p-4 mx-auto bg-white rounded mb-6">
-            <form action="{{ route('review.store', ['id' => $recipe['id']]) }}" method="POST">
+            {{-- TODO:action="{{ route('review.store', ['id' => $recipe['id']]) }}"  --}}
+            <form action="" method="POST">
             @csrf
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="rating">
@@ -75,7 +77,7 @@
             </div>
             </form>
         </div>
-    @endif
+    {{-- @endif --}}
     @endauth
 
     <div class="w-10/12 p-4 mx-auto bg-white rounded">

@@ -25,3 +25,9 @@ Breadcrumbs::for('show', function (BreadcrumbTrail $trail, $recipe) {
     $trail->push('レシピ一覧', route('recipe.index'));
     $trail->push($recipe['title'], route('recipe.show', $recipe['id']));
 });
+
+// Home > create
+Breadcrumbs::for('create', function (BreadcrumbTrail $trail) {
+    $trail->parent('home');
+    $trail->push('レシピ投稿', route('recipe.create'));
+});

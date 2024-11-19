@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use App\Models\Recipe;
 use App\Models\Category;
+use App\Models\Ingredient;
+use App\Models\Step;
 
 class RecipeController extends Controller
 {
@@ -48,7 +53,7 @@ class RecipeController extends Controller
             'recipes.created_at',
             'recipes.image',
             'users.name',
-            \DB::raw('AVG(reviews.rating) as rating')
+            DB::raw('AVG(reviews.rating) as rating')
         )
             ->join('users', 'users.id', '=', 'recipes.user_id')
             ->leftJoin('reviews', 'reviews.recipe_id', '=', 'recipes.id')
@@ -87,15 +92,53 @@ class RecipeController extends Controller
      */
     public function create()
     {
-        //
+        $categories = $populars = Category::all();
+        return view('recipes.create', compact('categories'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $req)
     {
-        //
+        $posts = $req->all();
+        $uuid = Str::uuid()->toString();
+        $image = $req->file('image');
+        // Upload image to S3
+        // $path = Storage::disk('s3')->putFile('recipe', $image, 'public');
+        // $url = Storage::disk('s3')->url($path);
+        $dummy_image = 'https://source.unsplash.com/random/?breakfast';
+
+        Recipe::insert([
+            'id' => $uuid,
+            'title' => $posts['title'],
+            'description' => $posts['description'],
+            'category_id' => $posts['category'],
+            'image' => $dummy_image,
+            'user_id' => Auth::id()
+        ]);
+
+        $ingredients = [];
+        foreach ($posts['ingredients'] as $key => $ingredient) {
+            $ingredients[$key] = [
+                'recipe_id' => $uuid,
+                'name' => $ingredient['name'],
+                'quantity' => $ingredient['quantity']
+
+            ];
+        }
+        Ingredient::insert($ingredients);
+
+        $steps = [];
+        foreach ($posts['steps'] as $key => $step) {
+            $steps[$key] = [
+                'recipe_id' => $uuid,
+                'step_number' => $key + 1,
+                'description' => $step
+
+            ];
+        }
+        Step::insert($steps);
     }
 
     /**
