@@ -109,36 +109,47 @@ class RecipeController extends Controller
         // $url = Storage::disk('s3')->url($path);
         $dummy_image = 'https://source.unsplash.com/random/?breakfast';
 
-        Recipe::insert([
-            'id' => $uuid,
-            'title' => $posts['title'],
-            'description' => $posts['description'],
-            'category_id' => $posts['category'],
-            'image' => $dummy_image,
-            'user_id' => Auth::id()
-        ]);
+        try {
+            DB::beginTransaction();
+            Recipe::insert([
+                'id' => $uuid,
+                'title' => $posts['title'],
+                'description' => $posts['description'],
+                'category_id' => $posts['category'],
+                'image' => $dummy_image,
+                'user_id' => Auth::id()
+            ]);
 
-        $ingredients = [];
-        foreach ($posts['ingredients'] as $key => $ingredient) {
-            $ingredients[$key] = [
-                'recipe_id' => $uuid,
-                'name' => $ingredient['name'],
-                'quantity' => $ingredient['quantity']
+            $ingredients = [];
+            foreach ($posts['ingredients'] as $key => $ingredient) {
+                $ingredients[$key] = [
+                    'recipe_id' => $uuid,
+                    'name' => $ingredient['name'],
+                    'quantity' => $ingredient['quantity']
 
-            ];
+                ];
+            }
+            Ingredient::insert($ingredients);
+
+            $steps = [];
+            foreach ($posts['steps'] as $key => $step) {
+                $steps[$key] = [
+                    'recipe_id' => $uuid,
+                    'step_number' => $key + 1,
+                    'description' => $step
+
+                ];
+            }
+            Step::insert($steps);
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            \Log::debug(print_r($th->getMessage(), true));
+            throw $th;
         }
-        Ingredient::insert($ingredients);
 
-        $steps = [];
-        foreach ($posts['steps'] as $key => $step) {
-            $steps[$key] = [
-                'recipe_id' => $uuid,
-                'step_number' => $key + 1,
-                'description' => $step
-
-            ];
-        }
-        Step::insert($steps);
+        return redirect()->route('recipe.show', ['id' => $uuid]);
     }
 
     /**
