@@ -170,8 +170,12 @@ class RecipeController extends Controller
         if (Auth::check() && ( Auth::id() === $recipe['user_id'] )) {
             $is_my_recipe = true;
         }
+        $is_reviewed = false;
+        if (Auth::check()) {
+            $is_reviewed = $recipe->reviews->contains('user_id', Auth::id());
+        }
 
-        return view('recipes.show', compact('recipe', 'is_my_recipe'));
+        return view('recipes.show', compact('recipe', 'is_my_recipe', 'is_reviewed'));
     }
 
     /**
@@ -243,6 +247,9 @@ class RecipeController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        Recipe::where('id', $id)->delete();
+
+        flash()->success('Recipe has been Deleted!!!!!');
+        return redirect()->route('recipe.index');
     }
 }
