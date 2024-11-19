@@ -28,8 +28,7 @@
             <h2 class="text-2xl font-bold mb-2">人気レシピ</h2>
             <div class="flex justify-between items-center mb-6">
             @foreach($populars as $p)
-                {{-- TODO: href  href="{{ route('recipe.show',['id' => $recipe['id']]) }}"--}}
-                <a href="" class="max-12 rounded overflow-hidden shadow-lg mx-4">
+                <a href="{{ route('recipe.show',['id' => $recipe['id']]) }}" class="max-12 rounded overflow-hidden shadow-lg mx-4">
                 <img class="max-h-44 h-44 w-full object-cover" src="{{$p->image}}" alt="{{$p->title}}">
                 <div class="px-6 py-4">
                     <div class="font-bold text-large mb-2">{{$p->title}}</div>

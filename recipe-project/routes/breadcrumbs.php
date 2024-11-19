@@ -18,3 +18,10 @@ Breadcrumbs::for('index', function (BreadcrumbTrail $trail) {
     $trail->parent('home');
     $trail->push('レシピ一覧', route('recipe.index'));
 });
+
+// Home > レシピ一覧 > recipe
+Breadcrumbs::for('show', function (BreadcrumbTrail $trail, $recipe) {
+    $trail->parent('home');
+    $trail->push('レシピ一覧', route('recipe.index'));
+    $trail->push($recipe['title'], route('recipe.show', $recipe['id']));
+});

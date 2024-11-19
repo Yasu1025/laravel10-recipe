@@ -1,7 +1,6 @@
 <section class="bg-white shadow">
   <div class="container mx-auto flex justify-between items-center">
-    {{-- TODO: href --}}
-    <a class="flex items-center">
+    <a href="/" class="flex items-center">
       <img src="/images/logo.png" alt="logo" class="w-16 h-16">
       <h1 class="text-2xl font-bold text-gray-800">Cook Laravel</h1>
     </a>
