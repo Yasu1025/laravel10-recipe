@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\RecipeCreateRequest;
 use App\Models\Recipe;
 use App\Models\Category;
 use App\Models\Ingredient;
@@ -99,7 +100,7 @@ class RecipeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $req)
+    public function store(RecipeCreateRequest $req)
     {
         $posts = $req->all();
         $uuid = Str::uuid()->toString();
